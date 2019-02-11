@@ -152,7 +152,7 @@ efd_tiers:
                         PortNumber = %{lookup('efd_tiers_vars.tier2.mysql_cluster_mgmt_port')}
                                 
                         [ndbd default]
-                        NoOfReplicas = 2      # Number of replicas
+                        NoOfReplicas = 1      # Number of replicas
                         DataMemory = 256M     # Memory allocate for data storage
                         IndexMemory = 128M    # Memory allocate for index storage
                         MaxNoOfAttributes = 10000
@@ -215,7 +215,7 @@ efd_tiers:
                         PortNumber = %{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_port')}
                                 
                         [ndbd default]
-                        NoOfReplicas = 2      # Number of replicas
+                        NoOfReplicas = 1      # Number of replicas
                         DataMemory = 256M     # Memory allocate for data storage
                         IndexMemory = 128M    # Memory allocate for index storage
                         MaxNoOfAttributes = 10000
