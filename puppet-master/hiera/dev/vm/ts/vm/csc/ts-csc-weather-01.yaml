@@ -1,0 +1,14 @@
+---
+
+monitoring_enabled: false
+firewalld_status: "stopped"
+
+ts_xml::ts_xml_subsystems:
+        - "Environment"
+
+ts_xml::ts_xml_languages:
+        - "html"
+        - "cpp"
+        - "python"
+
+ts_xml::ts_sal_path: "%{lookup('ts_sal::ts_sal_path')}"

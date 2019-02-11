@@ -35,3 +35,22 @@ reload_efd:
 
 status_efd: 
 	vagrant --design=designs/Vagrant_efd.yaml status
+
+################################################################################
+# EFD Cluster and Weather Station
+################################################################################
+
+start_efd_weather:
+	vagrant --design=designs/Vagrant_efd_weather_station.yaml up
+
+destroy_efd_weather:
+	vagrant --design=designs/Vagrant_efd_weather_station.yaml destroy
+
+halt_efd_weather:
+	vagrant --design=designs/Vagrant_efd_weather_station.yaml halt
+
+reload_efd_weather: 
+	vagrant --design=designs/Vagrant_efd_weather_station.yaml reload
+
+status_efd_weather: 
+	vagrant --design=designs/Vagrant_efd_weather_station.yaml status

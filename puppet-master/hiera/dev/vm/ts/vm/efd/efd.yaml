@@ -6,12 +6,10 @@ ts::efd::mysql_admin_password: "root4u"
 ts::efd::user_pwd: "lssttest"
 
 ts_xml::ts_xml_subsystems:
-        - "ATHeaderService"
-        - "Electrometer"
-        - "ATDome"
+        - "Environment"
 
 ts_efd::RunningEFDWriters:
-        - "ATDome"
+        - "Environment"
 
 # Note that as for SAL 3.8.40, html needs to go first
 ts_xml::ts_xml_languages:
@@ -58,6 +56,17 @@ efd_tiers_vars:
                 mysql_cluster_mgmt_config_path: /etc/my.cnf.d/mgmt_config_tier2.ini
                 mysql_cluster_server_config_path: /etc/my.cnf.d/mysql-server-tier2.cnf
                 mysql_cluster_mysqld_port: '3309'
+        tier3:
+                mysql_cluster_dir: '/var/lib/mysql-cluster-tier3'
+                mysql_cluster_datadir: '/mnt/tier3'
+                # This is also the front end URL
+                mysql_cluster_mgmt_url: '10.0.0.10'
+                mysql_cluster_mgmt_port: '1188'
+                mysql_cluster_user: mysql
+                mysql_cluster_mgmt_config_path: /etc/my.cnf.d/mgmt_config_tier3.ini
+                mysql_cluster_server_config_path: /etc/my.cnf.d/mysql-server-tier3.cnf
+                mysql_cluster_mysqld_port: '3309'
+
 
 # NodeID definitions:
 # mgmt: NodeID 1 - 3, NodeID 1 - Tier1, NodeID 2 - Tier2, NodeID3 - Tier3
@@ -100,10 +109,6 @@ efd_tiers:
                         [ndbd]
                         NodeId = 16
                         HostName = 10.0.0.11
-                        
-                        [ndbd]
-                        NodeId = 17
-                        HostName = 10.0.0.12
 
                 mysql_cluster_datanode_config_path: /etc/my.cnf.d/datanode_tier1.cnf
 
@@ -167,10 +172,6 @@ efd_tiers:
                         [ndbd]
                         NodeId = 16
                         HostName = 10.0.0.11
-                        
-                        [ndbd]
-                        NodeId = 17
-                        HostName = 10.0.0.12
 
                 mysql_cluster_datanode_config_path: /etc/my.cnf.d/datanode_tier2.cnf
 
@@ -199,3 +200,66 @@ efd_tiers:
                                 
                         mysql_cluster:
                                 ndb-connectstring: "%{lookup('efd_tiers_vars.tier2.mysql_cluster_mgmt_url')}:%{lookup('efd_tiers_vars.tier2.mysql_cluster_mgmt_port')}"         # IP address for server management node
+        # Tier 3 Definitions
+        tier3:
+                #######################################################################
+                # Management Node definitions
+
+                mgmt: |
+                        [ndb_mgmd default]
+                        DataDir = %{lookup('efd_tiers_vars.tier3.mysql_cluster_datadir')}/mgmt
+                        
+                        [ndb_mgmd]
+                        NodeId = 2
+                        HostName = %{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_url')}
+                        PortNumber = %{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_port')}
+                                
+                        [ndbd default]
+                        NoOfReplicas = 2      # Number of replicas
+                        DataMemory = 256M     # Memory allocate for data storage
+                        IndexMemory = 128M    # Memory allocate for index storage
+                        MaxNoOfAttributes = 10000
+                        MaxNoOfTables = 4096
+                        DataDir  = %{lookup('efd_tiers_vars.tier3.mysql_cluster_datadir')}/data/
+                        MaxNoOfOrderedIndexes = 5000
+                        MaxNoOfUniqueHashIndexes = 5000    
+                        
+                        [mysqld]
+                        NodeId = 4
+                        HostName = 10.0.0.13
+                        
+                        [mysqld]
+                        NodeId = 5
+                        HostName = 10.0.0.14
+                        
+                        [ndbd]
+                        NodeId = 16
+                        HostName = 10.0.0.11
+
+                mysql_cluster_datanode_config_path: /etc/my.cnf.d/datanode_tier3.cnf
+
+                mysql_cluster_datanode_datapath: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_datadir')}"
+                # This feature is only necessary when you want to start the server with one node
+                # mysql_cluster_datanode_nowait_nodeid: "16,17"
+
+                ndb_node:
+                        mysqld:
+                                ndbcluster: ''
+                                ndb-connectstring: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_url')}:%{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_port')}"    # IP address of Management Node
+                
+                        mysql_cluster:
+                                ndb-connectstring: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_url')}:%{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_port')}"     # IP address of Management Node
+
+                mysql_server:
+                        mysqld:
+                                ndbcluster: ''
+                                ndb-connectstring: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_url')}:%{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_port')}"           # IP address for server management node, for more management servers add them with a comma separation
+                                default_storage_engine: ndbcluster                              # Define default Storage Engine used by MySQL
+                                datadir: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_datadir')}/srv/"                          # <path> should be for user: mysql group: mysql
+                                socket: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_dir')}/srv/mysqld_cluster.sock"
+                                pid-file: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_dir')}/srv/mysqld_cluster.pid"
+                                port: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_mysqld_port')}"
+                                #skip-grant-tables: ''                           #Used to start, then should be removed
+                                
+                        mysql_cluster:
+                                ndb-connectstring: "%{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_url')}:%{lookup('efd_tiers_vars.tier3.mysql_cluster_mgmt_port')}"         # IP address for server management node
