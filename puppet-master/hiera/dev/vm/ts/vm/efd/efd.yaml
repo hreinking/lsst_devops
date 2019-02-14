@@ -101,11 +101,7 @@ efd_tiers:
                         [mysqld]
                         NodeId = 4
                         HostName = 10.0.0.13
-                        
-                        [mysqld]
-                        NodeId = 5
-                        HostName = 10.0.0.14
-                        
+                                                
                         [ndbd]
                         NodeId = 16
                         HostName = 10.0.0.11
@@ -165,10 +161,6 @@ efd_tiers:
                         NodeId = 4
                         HostName = 10.0.0.13
                         
-                        [mysqld]
-                        NodeId = 5
-                        HostName = 10.0.0.14
-                        
                         [ndbd]
                         NodeId = 16
                         HostName = 10.0.0.11
@@ -227,10 +219,6 @@ efd_tiers:
                         [mysqld]
                         NodeId = 4
                         HostName = 10.0.0.13
-                        
-                        [mysqld]
-                        NodeId = 5
-                        HostName = 10.0.0.14
                         
                         [ndbd]
                         NodeId = 16
