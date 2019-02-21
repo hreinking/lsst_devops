@@ -12,7 +12,7 @@ nodes:
         # ======================================================================
         influx:
                 hostname: "gs-influxdb-node-01.vm.dev.lsst.org"
-                ip: 10.0.0.251
+                ip: "10.0.0.251"
                 memory: 1024
                 cpu: 1
                 puppet_environment: "develop"
@@ -27,6 +27,13 @@ nodes:
         graylog:
                 hostname: "gs-graylog-node-01.vm.dev.lsst.org"
                 ip: "10.0.0.253"
+                memory: 2048
+                cpu: 2
+                puppet_environment: "develop"
+
+        graylog-secondary:
+                hostname: "gs-graylog-node-02.vm.dev.lsst.org"
+                ip: "10.0.0.254"
                 memory: 2048
                 cpu: 2
                 puppet_environment: "develop"
